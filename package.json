@@ -1,0 +1,30 @@
+{
+  "name": "fullstack-qa-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fullstack QA Automation Project — React + Cypress with API contract validation",
+  "scripts": {
+    "frontend:install": "cd frontend && npm install",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:preview": "cd frontend && npm run preview",
+    "qa:install": "cd qa && npm install",
+    "qa:open": "cd qa && npm run cy:open",
+    "qa:run": "cd qa && npm run cy:run",
+    "qa:run:smoke": "cd qa && npm run cy:run:smoke",
+    "qa:run:regression": "cd qa && npm run cy:run:regression",
+    "qa:run:api": "cd qa && npm run cy:run:api",
+    "qa:run:e2e": "cd qa && npm run cy:run:e2e",
+    "qa:report": "cd qa && npm run report",
+    "install:all": "npm run frontend:install && npm run qa:install",
+    "dev": "concurrently --kill-others-on-fail \"npm run frontend:dev\" \"npm run qa:open\"",
+    "start": "npm run frontend:dev",
+    "test": "npm run qa:run",
+    "test:smoke": "npm run qa:run:smoke",
+    "test:api": "npm run qa:run:api",
+    "ci": "npm run frontend:build && npm run qa:run && npm run qa:report"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

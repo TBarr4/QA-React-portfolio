@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Product",
+  "description": "Schema for a single product from the API",
+  "type": "object",
+  "required": ["id", "title", "price", "description", "category", "image", "rating"],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "price": {
+      "type": "number",
+      "minimum": 0
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "image": {
+      "type": "string",
+      "format": "uri"
+    },
+    "rating": {
+      "type": "object",
+      "required": ["rate", "count"],
+      "properties": {
+        "rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

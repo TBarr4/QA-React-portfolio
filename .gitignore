@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.env
+.env.local
+*.log
+.DS_Store
+coverage/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+mochawesome-report/
+.cache/
+
+# Cypress generated reports — committed only intentionally
+qa/cypress/results/
+qa/cypress/reports/
