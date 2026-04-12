@@ -59,6 +59,7 @@ jobs:
           command: npm run cy:run:api:ci
 
       - name: Run Cypress E2E tests
+        if: ${{ secrets.CYPRESS_RECORD_KEY == '' }}
         uses: cypress-io/github-action@v6
         with:
           install: false
@@ -67,6 +68,19 @@ jobs:
           wait-on: http://127.0.0.1:3000
           wait-on-timeout: 120
           command: npm run cy:run:e2e
+
+      - name: Run Cypress E2E tests (recorded)
+        if: ${{ secrets.CYPRESS_RECORD_KEY != '' }}
+        uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+        with:
+          install: false
+          working-directory: qa
+          start: npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
+          wait-on: http://127.0.0.1:3000
+          wait-on-timeout: 120
+          command: npm run cy:run:e2e:record
 
       - name: Generate Mochawesome report
         if: always()
