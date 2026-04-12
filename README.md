@@ -1,146 +1,98 @@
-﻿# ShopFlow — Fullstack QA Automation
+# ShopFlow - Fullstack QA Automation
 
-A React e-commerce frontend wired to the [FakeStore API](https://fakestoreapi.com), with a full Cypress automation suite covering E2E flows and API contract validation.
+React e-commerce frontend integrated with a Cypress automation suite for E2E and API contract testing.
 
----
+## What this project shows
 
-## What it does
+- Feature-based React architecture with TypeScript
+- Stable Cypress E2E tests using data-test selectors and page objects
+- API contract validation with JSON Schema and AJV
+- CI pipeline that runs tests on every commit and pull request
 
-- Browse and filter products by category
-- Add items to a shopping cart (in-memory, no backend required)
-- Fill out a checkout form with client-side validation
-- Login with FakeStore demo credentials
-- Cypress test suite: E2E flows + API schema validation + tag-based filtering
+## Tech stack
 
----
+- Frontend: React, TypeScript, Vite
+- Testing: Cypress, @cypress/grep, Mochawesome, AJV
+- CI: GitHub Actions
+- API: FakeStore API
 
 ## Requirements
 
 - Node.js 18+
 - npm 9+
-- Google Chrome (for Cypress)
+- Chrome (for local Cypress runs)
 
----
-
-## Install
+## Installation
 
 ```bash
 npm run install:all
 ```
 
----
-
-## Run the app
+## Run locally
 
 ```bash
 npm start
-# opens http://localhost:3000
 ```
 
-Demo credentials: **mor_2314 / 83r5^_**
+App URL: http://localhost:3000
 
----
+Demo credentials:
+
+- Username: mor_2314
+- Password: 83r5^_
 
 ## Run tests
 
-> The frontend must be running before executing E2E tests.
+Keep the frontend running in one terminal, then use another terminal for tests.
 
 ```bash
-# Run all tests (headless)
 npm test
+```
 
-# Open Cypress interactive runner
+Useful test commands:
+
+```bash
 npm run qa:open
-
-# Smoke tests only
 npm run test:smoke
-
-# API contract tests only
 npm run test:api
-
-# Generate HTML report (after a run)
 npm run qa:report
 ```
 
----
-
-## Project structure
-
-```
-fullstack-qa-automation/
-├── frontend/          # React + Vite (TypeScript)
-│   └── src/
-│       ├── app/       # Providers, routing
-│       ├── features/  # auth / cart / checkout / products
-│       ├── infrastructure/  # HTTP client, env config
-│       └── shared/    # Reusable components, hooks, utils
-│
-└── qa/                # Cypress test suite
-    └── cypress/
-        ├── api/       # API contract tests + JSON schemas
-        ├── e2e/       # End-to-end flows (auth / cart / checkout / products)
-        └── support/   # Commands, page objects, test data, validators
-    ```
-
-    ---
-
-    ## Environment variables
-
-    Copy `frontend/.env.example` to `frontend/.env.local` to override defaults:
-
-    ```bash
-    cp frontend/.env.example frontend/.env.local
-    ```
-
-    | Variable | Default | Description |
-    |---|---|---|
-    | `VITE_API_BASE_URL` | `https://fakestoreapi.com` | API base URL |
-    | `VITE_APP_NAME` | `ShopFlow` | App display name |
-
-    ---
-
-    ## Available scripts
-
-    | Command | Description |
-    |---|---|
-    | `npm run install:all` | Install all dependencies |
-    | `npm start` | Start frontend dev server |
-    | `npm test` | Run Cypress headless |
-    | `npm run test:smoke` | Run `@smoke` tagged tests only |
-    | `npm run test:api` | Run API contract tests only |
-    | `npm run qa:open` | Open Cypress interactive runner |
-    | `npm run qa:report` | Generate HTML test report |
-    | `npm run frontend:build` | Production build |
-    | `npm run ci` | Build + run all tests + report |
-```
-
----
-
 ## Environment variables
 
-Copy `frontend/.env.example` to `frontend/.env.local` to override defaults:
+Copy the example file:
 
 ```bash
 cp frontend/.env.example frontend/.env.local
 ```
 
-| Variable | Default | Description |
-|---|---|---|
-| `VITE_API_BASE_URL` | `https://fakestoreapi.com` | API base URL |
-| `VITE_APP_NAME` | `ShopFlow` | App display name |
+Variables:
 
----
+- VITE_API_BASE_URL (default: https://fakestoreapi.com)
+- VITE_APP_NAME (default: ShopFlow)
 
-## Available scripts
+## Repository structure
 
-| Command | Description |
-|---|---|
-| `npm run install:all` | Install all dependencies |
-| `npm start` | Start frontend dev server |
-| `npm test` | Run Cypress headless |
-| `npm run test:smoke` | Run `@smoke` tagged tests only |
-| `npm run test:api` | Run API contract tests only |
-| `npm run qa:open` | Open Cypress interactive runner |
-| `npm run qa:report` | Generate HTML test report |
-| `npm run frontend:build` | Production build |
-| `npm run ci` | Build + run all tests + report |
+```text
+fullstack-qa-automation/
+  frontend/          React app (features, shared, infrastructure)
+  qa/                Cypress suite (e2e, api, support)
+  .github/workflows/ CI pipeline
+```
+
+## CI behavior
+
+The workflow in .github/workflows/ci.yml runs on:
+
+- Every push (all branches)
+- Every pull request
+- Manual workflow dispatch
+
+It performs:
+
+- Frontend + QA dependency installation
+- Typechecks (frontend and QA)
+- Frontend production build
+- Cypress API tests (CLI)
+- Cypress E2E tests (CLI)
+- Mochawesome report generation and artifact upload

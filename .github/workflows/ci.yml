@@ -1,15 +1,22 @@
-name: CI — Build & Test
+name: CI Build and Cypress
 
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - '**'
   pull_request:
-    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-frontend:
-    name: Build Frontend
+  quality-and-tests:
+    name: Build plus Cypress API and E2E
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,139 +26,63 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+            qa/package-lock.json
 
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
 
+      - name: Install QA dependencies
+        working-directory: qa
+        run: npm ci
+
+      - name: Typecheck frontend
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Typecheck QA
+        working-directory: qa
+        run: npm run typecheck
+
       - name: Build frontend
         working-directory: frontend
         run: npm run build
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: Run Cypress API tests
+        uses: cypress-io/github-action@v6
         with:
-          name: frontend-dist
-          path: frontend/dist
-          retention-days: 1
+          install: false
+          working-directory: qa
+          command: npm run cy:run:api
+          browser: chrome
 
-  api-tests:
-    name: API Contract Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v6
         with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: qa/package-lock.json
+          install: false
+          working-directory: qa
+          start: npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
+          wait-on: http://127.0.0.1:3000
+          wait-on-timeout: 120
+          command: npm run cy:run:e2e
+          browser: chrome
 
-      - name: Install QA dependencies
-        working-directory: qa
-        run: npm ci
-
-      - name: Run API contract tests
-        working-directory: qa
-        run: npx cypress run --spec 'cypress/api/**/*.cy.ts'
-
-      - name: Upload API test results
+      - name: Generate Mochawesome report
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-test-results
-          path: qa/cypress/results
-          retention-days: 5
-
-  e2e-tests:
-    name: E2E UI Tests
-    runs-on: ubuntu-latest
-    needs: build-frontend
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Download frontend build
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-dist
-          path: frontend/dist
-
-      - name: Install frontend dependencies (for preview server)
-        working-directory: frontend
-        run: npm ci
-
-      - name: Install QA dependencies
-        working-directory: qa
-        run: npm ci
-
-      - name: Start frontend preview & run Cypress
-        working-directory: qa
-        run: |
-          cd ../frontend && npx vite preview --port 3000 &
-          sleep 5
-          npx cypress run --spec 'cypress/e2e/**/*.cy.ts'
-
-      - name: Upload E2E test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-test-results
-          path: |
-            qa/cypress/results
-            qa/cypress/screenshots
-            qa/cypress/videos
-          retention-days: 5
-
-  generate-report:
-    name: Generate Test Report
-    runs-on: ubuntu-latest
-    needs: [api-tests, e2e-tests]
-    if: always()
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install QA dependencies
-        working-directory: qa
-        run: npm ci
-
-      - name: Download API test results
-        uses: actions/download-artifact@v4
-        with:
-          name: api-test-results
-          path: qa/cypress/results
-        continue-on-error: true
-
-      - name: Download E2E test results
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-test-results
-          path: qa/cypress/results
-        continue-on-error: true
-
-      - name: Merge and generate Mochawesome report
         working-directory: qa
         run: npm run report
-        continue-on-error: true
 
-      - name: Upload HTML report
+      - name: Upload Cypress artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-report
-          path: qa/cypress/reports
-          retention-days: 30
+          name: cypress-artifacts
+          path: |
+            qa/cypress/results
+            qa/cypress/reports
+            qa/cypress/screenshots
+            qa/cypress/videos
+          retention-days: 14
