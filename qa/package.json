@@ -9,7 +9,7 @@
     "cy:run:smoke": "cypress run --browser chrome --env grepTags=@smoke",
     "cy:run:regression": "cypress run --browser chrome --env grepTags=@regression",
     "cy:run:api": "cypress run --browser chrome --spec 'cypress/api/**/*.cy.ts'",
-    "cy:run:api:ci": "cypress run --browser chrome --spec 'cypress/api/**/*.cy.ts' --config baseUrl=null",
+    "cy:run:api:ci": "cypress run --browser chrome --spec 'cypress/api/**/*.cy.ts'",
     "cy:run:e2e": "cypress run --browser chrome --spec 'cypress/e2e/**/*.cy.ts'",
     "cy:run:record": "cypress run --browser chrome --record",
     "cy:run:e2e:record": "cypress run --browser chrome --spec 'cypress/e2e/**/*.cy.ts' --record",

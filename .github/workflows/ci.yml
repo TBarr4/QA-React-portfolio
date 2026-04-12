@@ -58,6 +58,9 @@ jobs:
         with:
           install: false
           working-directory: qa
+          start: npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
+          wait-on: http://127.0.0.1:3000
+          wait-on-timeout: 120
           command: npm run cy:run:api:ci
 
       - name: Run Cypress E2E tests
