@@ -56,8 +56,7 @@ jobs:
         with:
           install: false
           working-directory: qa
-          command: npm run cy:run:api
-          browser: chrome
+          command: npm run cy:run:api:ci
 
       - name: Run Cypress E2E tests
         uses: cypress-io/github-action@v6
@@ -68,7 +67,6 @@ jobs:
           wait-on: http://127.0.0.1:3000
           wait-on-timeout: 120
           command: npm run cy:run:e2e
-          browser: chrome
 
       - name: Generate Mochawesome report
         if: always()

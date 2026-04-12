@@ -9,6 +9,7 @@
     "cy:run:smoke": "cypress run --browser chrome --env grepTags=@smoke",
     "cy:run:regression": "cypress run --browser chrome --env grepTags=@regression",
     "cy:run:api": "cypress run --browser chrome --spec 'cypress/api/**/*.cy.ts'",
+    "cy:run:api:ci": "cypress run --browser chrome --spec 'cypress/api/**/*.cy.ts' --config baseUrl=null",
     "cy:run:e2e": "cypress run --browser chrome --spec 'cypress/e2e/**/*.cy.ts'",
     "report": "npx mochawesome-merge cypress/results/*.json -o cypress/results/merged-report.json && npx marge cypress/results/merged-report.json -f report -o cypress/reports",
     "clean:reports": "rimraf cypress/results cypress/reports cypress/screenshots cypress/videos",
