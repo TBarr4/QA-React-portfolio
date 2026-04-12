@@ -55,10 +55,13 @@ jobs:
 
       - name: Run Cypress API tests
         uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_apiBaseUrl: http://127.0.0.1:4000
+          VITE_API_BASE_URL: http://127.0.0.1:4000
         with:
           install: false
           working-directory: qa
-          start: npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
+          start: npm run mock:api, npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
           wait-on: http://127.0.0.1:3000
           wait-on-timeout: 120
           command: npm run cy:run:api:ci
@@ -66,10 +69,13 @@ jobs:
       - name: Run Cypress E2E tests
         if: ${{ env.CYPRESS_RECORD_KEY == '' }}
         uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_apiBaseUrl: http://127.0.0.1:4000
+          VITE_API_BASE_URL: http://127.0.0.1:4000
         with:
           install: false
           working-directory: qa
-          start: npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
+          start: npm run mock:api, npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
           wait-on: http://127.0.0.1:3000
           wait-on-timeout: 120
           command: npm run cy:run:e2e
@@ -77,10 +83,13 @@ jobs:
       - name: Run Cypress E2E tests (recorded)
         if: ${{ env.CYPRESS_RECORD_KEY != '' }}
         uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_apiBaseUrl: http://127.0.0.1:4000
+          VITE_API_BASE_URL: http://127.0.0.1:4000
         with:
           install: false
           working-directory: qa
-          start: npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
+          start: npm run mock:api, npm --prefix ../frontend run dev -- --host 0.0.0.0 --port 3000
           wait-on: http://127.0.0.1:3000
           wait-on-timeout: 120
           command: npm run cy:run:e2e:record
