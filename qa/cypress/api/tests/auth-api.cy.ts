@@ -55,4 +55,18 @@ describe('Auth API Contract', { tags: ['@smoke', '@regression'] }, () => {
       expect(valid).to.be.true;
     });
   });
+
+  it('should return a valid auth token string from the login API', { tags: '@regression' }, () => {
+    cy.request({
+      method: 'POST',
+      url: `${baseUrl}${apiEndpoints.login}`,
+      body: {
+        username: testUsers.valid.username,
+        password: testUsers.valid.password,
+      },
+    }).then((response) => {
+      expect(response.body).to.have.property('token');
+      expect(response.body.token).to.be.a('string').and.to.have.length.greaterThan(10);
+    });
+  });
 });

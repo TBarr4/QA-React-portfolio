@@ -82,6 +82,21 @@ describe('Product Listing', { tags: ['@smoke', '@regression'] }, () => {
     cy.getByTestId('no-products-message').should('be.visible');
   });
 
+  it('should reset category filter when selecting All after a filtered view', { tags: '@regression' }, () => {
+    cy.intercept('GET', '**/products').as('getProducts');
+    cy.intercept('GET', '**/products/category/electronics').as('getElectronics');
+
+    productPage.visit();
+    cy.wait('@getProducts');
+
+    productPage.selectCategory('electronics');
+    cy.wait('@getElectronics');
+
+    cy.getByTestId('category-all').click();
+    productPage.getProductCards().should('have.length.greaterThan', 0);
+    productPage.getCategoryFilter().should('contain.text', 'All');
+  });
+
   it('should add a product to the cart', { tags: '@smoke' }, () => {
     cy.intercept('GET', '**/products').as('getProducts');
     productPage.visit();
